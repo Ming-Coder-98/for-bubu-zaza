@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For My Bubu Zaza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Mali:wght@400;600&display=swap">
+<style>
+  /* Layout: one narrow "storybook" column. The two bears share a stage, with the heart meter and action buttons underneath.
+     Deliberately single-theme: a strawberry-milk sticker look that stays the same on any host. */
+  :root {
+    --bg: #fde3ea;          /* strawberry milk */
+    --paper: #fff8fa;
+    --ink: #4a2a24;         /* dark bear brown */
+    --ink-soft: #8b6158;
+    --dudu: #a0673f;
+    --dudu-dark: #7d4c2c;
+    --muzzle: #ecc9a3;
+    --bubu: #ffffff;
+    --pink: #ff6f91;
+    --pink-soft: #ffc2d1;
+    --blush: #ffadc0;
+    --line: #f3bccb;
+    --display: "Gaegu", "Comic Sans MS", "Chalkboard SE", cursive;
+    --body: "Mali", "Trebuchet MS", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(var(--pink-soft) 1.5px, transparent 1.5px);
+    background-size: 26px 26px;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.55;
+    padding-inline: 16px;
+    padding-block: 28px 48px;
+    overflow-x: hidden;
+    margin: 0;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+  header { text-align: center; }
+  .eyebrow {
+    font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft); margin: 0;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(44px, 11vw, 72px); line-height: .95;
+    margin: 6px 0 0; text-wrap: balance; color: var(--ink);
+  }
+  h1 em { font-style: normal; color: var(--pink); }
+
+  /* Stage */
+  .stage {
+    position: relative;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 28px;
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: 20px 14px 18px;
+  }
+  .bears {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end;
+  }
+  .bear { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; position: relative; }
+  .pic {
+    position: relative; width: 100%; max-width: 200px; aspect-ratio: 1 / 1;
+    background-color: #fff; background-repeat: no-repeat;
+    background-size: contain; background-position: center;
+    border: 3px solid var(--ink); border-radius: 22px; cursor: pointer;
+    transition: transform .5s cubic-bezier(.3,1.6,.5,1);
+  }
+  .pic.swap { animation: swap .45s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes swap { 0% { transform: scale(.85) rotate(-4deg); } 100% { transform: none; } }
+  .together {
+    width: 100%; max-width: 340px; height: auto; display: block;
+    border: 3px solid var(--ink); border-radius: 22px;
+  }
+  .bear-name { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1; }
+  .bubble {
+    position: relative; min-height: 64px; width: 100%;
+    background: var(--bubu); border: 2.5px solid var(--ink); border-radius: 18px;
+    padding: 8px 12px; font-size: 14.5px; text-align: center;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .bubble::after {
+    content: ""; position: absolute; bottom: -10px; left: 50%; width: 16px; height: 16px;
+    background: var(--bubu); border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink);
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .bubble.pop { animation: pop .35s ease; }
+  @keyframes pop { 0% { transform: scale(.9); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+  /* hugging pulls bears together */
+  .stage.hug #dudu .pic { transform: translateX(22%) rotate(8deg); }
+  .stage.hug #bubu .pic { transform: translateX(-22%) rotate(-8deg); }
+  .stage.wiggle #dudu .pic { animation: wiggle .5s ease; }
+  @keyframes wiggle { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-7deg); } 75% { transform: rotate(7deg); } }
+
+
+  /* Meter */
+  .meter { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; }
+  .meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; }
+  .meter-label { font-weight: 600; }
+  .meter-num { font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--pink); font-variant-numeric: tabular-nums; }
+  .track {
+    height: 22px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--bg); overflow: hidden;
+  }
+  .fill {
+    height: 100%; width: 0%;
+    background: repeating-linear-gradient(-45deg, var(--pink) 0 10px, #ff86a3 10px 20px);
+    border-right: 2.5px solid var(--ink);
+    transition: width .6s cubic-bezier(.3,1.4,.5,1);
+  }
+  .fill[data-zero="true"] { border-right: 0; }
+
+  /* Actions */
+  .prompt { text-align: center; margin: 0; font-family: var(--display); font-size: 24px; font-weight: 700; }
+  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .act {
+    font: inherit; font-weight: 600; font-size: 15px; color: var(--ink);
+    background: var(--paper); border: 2.5px solid var(--ink); border-radius: 18px;
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 12px 8px 10px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    transition: transform .12s ease, box-shadow .12s ease, background .2s;
+  }
+  .act svg { width: 44px; height: 44px; }
+  .act:hover { background: #fff; transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+  .act:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  .act:focus-visible, .btn:focus-visible { outline: 3px dashed var(--pink); outline-offset: 4px; }
+
+  /* Love note */
+  .note {
+    background: var(--paper);
+    background-image: repeating-linear-gradient(transparent 0 31px, var(--line) 31px 32px);
+    border: 2.5px solid var(--ink); border-radius: 6px 22px 6px 22px;
+    padding: 14px 20px 16px;
+    transform: rotate(-1deg);
+  }
+  .note.pop { animation: notepop .5s ease; }
+  @keyframes notepop { 0% { transform: rotate(-1deg) scale(1); } 50% { transform: rotate(1deg) scale(1.04); } 100% { transform: rotate(-1deg) scale(1); } }
+  .note h2 { font-family: var(--display); font-size: 26px; margin: 0; line-height: 32px; }
+  .note p { font-family: var(--display); font-size: 22px; line-height: 32px; margin: 0; min-height: 64px; }
+  .note .sig { text-align: right; color: var(--ink-soft); min-height: 0; }
+
+  /* Question */
+  .question {
+    position: relative; text-align: center;
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 28px;
+    box-shadow: 6px 6px 0 var(--pink);
+    padding: 22px 16px 26px; min-height: 210px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    animation: rise .6s cubic-bezier(.3,1.5,.5,1);
+  }
+  @keyframes rise { from { transform: translateY(20px) scale(.95); opacity: .3; } to { transform: none; opacity: 1; } }
+  .question h2 { font-family: var(--display); font-size: clamp(32px, 8vw, 44px); margin: 0; line-height: 1; text-wrap: balance; }
+  .question .btns { display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; min-height: 70px; }
+  .btn {
+    font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1;
+    border: 2.5px solid var(--ink); border-radius: 999px; cursor: pointer;
+    padding: 12px 28px; box-shadow: 4px 4px 0 var(--ink); color: var(--ink);
+    transition: transform .15s ease, left .25s ease, top .25s ease;
+  }
+  .btn-yes { background: var(--pink); color: #fff; }
+  .btn-no { background: var(--paper); position: relative; }
+  .btn-no.loose { position: absolute; }
+
+  .final h2 { color: var(--pink); }
+  .final p { margin: 0; max-width: 32em; text-wrap: balance; }
+  .small-link {
+    font: inherit; font-size: 14px; background: none; border: 0; color: var(--ink-soft);
+    text-decoration: underline; cursor: pointer; padding: 4px;
+  }
+
+  /* floating hearts */
+  .heart {
+    position: fixed; pointer-events: none; z-index: 50;
+    color: var(--pink); font-size: 26px; line-height: 1;
+    animation: float 1.4s ease-out forwards;
+    text-shadow: 1px 1px 0 var(--ink);
+  }
+  @keyframes float {
+    0% { transform: translate(0,0) scale(.6); opacity: 1; }
+    100% { transform: translate(var(--dx), -160px) scale(1.2) rotate(var(--rot)); opacity: 0; }
+  }
+
+  footer { text-align: center; font-size: 13px; color: var(--ink-soft); }
+
+  @media (max-width: 560px) {
+    .actions { grid-template-columns: repeat(2, 1fr); }
+    .bubble { font-size: 13.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap" id="app" data-mood="grumpy">
+  <header>
+    <p class="eyebrow">A little website from Dudu Mingming</p>
+    <h1>Bubu Zaza, I'm <em>sorry</em></h1>
+  </header>
+
+  <section class="stage" id="stage" aria-label="Dudu Mingming and Bubu Zaza">
+    <div class="bears">
+      <!-- DUDU: brown bear -->
+      <div class="bear" id="dudu">
+        <div class="bubble" id="duduSays" aria-live="polite">Bubu… can we talk? I made you this.</div>
+        <div class="pic" role="img" aria-label="Dudu Mingming the brown bear">
+        </div>
+        <span class="bear-name">Dudu Mingming</span>
+      </div>
+
+      <!-- BUBU: white bear -->
+      <div class="bear" id="bubu">
+        <div class="bubble" id="bubuSays" aria-live="polite">Hmph. I'm still upset.</div>
+        <div class="pic" role="img" aria-label="Bubu Zaza the white bear">
+        </div>
+        <span class="bear-name">Bubu Zaza</span>
+      </div>
+    </div>
+
+    <div class="meter">
+      <div class="meter-top">
+        <span class="meter-label" id="moodLabel">Bubu Zaza's mood: very grumpy</span>
+        <span class="meter-num" id="moodNum">0%</span>
+      </div>
+      <div class="track" role="progressbar" aria-label="Bubu Zaza's happiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="track">
+        <div class="fill" id="fill" data-zero="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="prompt" id="prompt">Bubu Zaza, tap anything below to fill your heart meter</p>
+
+  <div class="actions" id="actions">
+    <button class="act" data-act="sorry" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40 C8 30 4 20 10 13 c5 -6 12 -3 14 2 c2 -5 9 -8 14 -2 c6 7 2 17 -14 27z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M24 15 l-3 8 l5 3 l-3 9" stroke="var(--ink)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Hear Mingming say sorry
+    </button>
+    <button class="act" data-act="hug" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="24" r="11" fill="var(--dudu)" stroke="var(--ink)" stroke-width="3"/><circle cx="31" cy="24" r="11" fill="var(--bubu)" stroke="var(--ink)" stroke-width="3"/><path d="M24 12 c-2 -4 -8 -3 -7 1 c1 3 7 6 7 6 s6 -3 7 -6 c1 -4 -5 -5 -7 -1z" fill="var(--pink)" stroke="var(--ink)" stroke-width="2"/></svg>
+      Get a big hug
+    </button>
+    <button class="act" data-act="snack" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 16 h22 l-3 26 h-16z" fill="var(--muzzle)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M11 16 h26" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><path d="M26 16 l5 -11" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="36" r="2.5" fill="var(--ink)"/><circle cx="26" cy="37" r="2.5" fill="var(--ink)"/><circle cx="23" cy="32" r="2.5" fill="var(--ink)"/></svg>
+      Get a snack
+    </button>
+    <button class="act" data-act="note" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="12" width="34" height="24" rx="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/><path d="M7 14 l17 13 l17 -13" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M24 34 c-1 -2 -5 -2 -4 1 c1 2 4 3 4 3 s3 -1 4 -3 c1 -3 -3 -3 -4 -1z" fill="var(--pink)"/></svg>
+      Open a love note
+    </button>
+  </div>
+
+  <article class="note" id="note">
+    <h2>Dear Bubu Zaza,</h2>
+    <p id="noteText">I'm sorry I made you sad. I'll do better, I promise.</p>
+    <p class="sig">— your Dudu Mingming</p>
+  </article>
+
+  <section id="questionSlot"></section>
+
+  <footer>Made by Dudu Mingming, for Bubu Zaza only ♥</footer>
+</main>
+
+<script>
+(function () {
+  const app = document.getElementById('app');
+  const stage = document.getElementById('stage');
+  const duduSays = document.getElementById('duduSays');
+  const bubuSays = document.getElementById('bubuSays');
+  const fill = document.getElementById('fill');
+  const track = document.getElementById('track');
+  const moodNum = document.getElementById('moodNum');
+  const moodLabel = document.getElementById('moodLabel');
+  const noteText = document.getElementById('noteText');
+  const slot = document.getElementById('questionSlot');
+  const prompt = document.getElementById('prompt');
+
+  let mood = 0;
+  let asked = false;
+  const counters = { sorry: 0, hug: 0, snack: 0, note: 0 };
+
+  const lines = {
+    sorry: [
+      "I'm really, really sorry, Bubu. I was wrong.",
+      "I should have listened to you instead of arguing.",
+      "You were upset and I made it worse. I'm sorry.",
+      "I promise to think before I speak next time.",
+      "Sorry times a hundred. Times a thousand!"
+    ],
+    hug: [
+      "Come here… *squeeeeze*",
+      "A hug so big it counts as two.",
+      "Extra-long hug. I'm not letting go yet.",
+      "Warm bear hug, delivered!"
+    ],
+    snack: [
+      "Bubble tea with extra pearls, just for you.",
+      "Warm dumplings, I saved you the biggest one.",
+      "A slice of strawberry cake. I didn't even take a bite!",
+      "Hot noodles with an egg on top. Your favourite.",
+      "Chocolate. All of it. It's yours."
+    ],
+    note: [
+      "Your smile is my favourite thing in the whole world.",
+      "Even when we fight, I'd still choose you every single time.",
+      "You make ordinary days feel like little holidays.",
+      "I'm sorry I made you sad. I'll do better, I promise.",
+      "My heart is quiet and happy when you're next to me.",
+      "You're my best friend, my favourite person, my Bubu.",
+      "I'd rather be wrong with you than right without you."
+    ]
+  };
+  const duduNoteLine = [
+    "I wrote you a note. Read it?",
+    "Read it again, I mean every word.",
+    "Psst, check the note below.",
+  ];
+  const bubuReplies = {
+    grumpy: ["Hmph.", "…I'm still upset.", "Don't think it's that easy.", "Hmm. Keep going."],
+    soft: ["…okay, that was a little cute.", "Hmph… maybe a bit better.", "I'm trying not to smile.", "Okay. Go on…"],
+    happy: ["Hehe ♥", "Okay okay, you're forgiven-ish!", "Dudu you silly bear ♥", "My heart is so full!"]
+  };
+  const gains = { sorry: 12, hug: 12, snack: 12, note: 12 };
+  // Each picture shows from its percentage until the next one
+  const levels = [0, 12, 24, 36, 48, 60, 72, 90, 100];
+  const levelName = n => (n < 10 ? '0' : '') + n;
+  function levelOf(m) { let l = 0; for (const x of levels) if (m >= x) l = x; return l; }
+
+  function stageOf(m) { return m >= 70 ? 'happy' : m >= 30 ? 'soft' : 'grumpy'; }
+  function labelOf(m) {
+    if (m >= 100) return "Bubu Zaza's mood: so happy!";
+    if (m >= 70) return "Bubu Zaza's mood: smiling";
+    if (m >= 30) return "Bubu Zaza's mood: softening";
+    if (m > 0) return "Bubu Zaza's mood: grumpy";
+    return "Bubu Zaza's mood: very grumpy";
+  }
+  function pick(arr, i) { return arr[i % arr.length]; }
+
+  function say(el, text) {
+    el.textContent = text;
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  }
+
+  function hearts(fromEl, n) {
+    const r = fromEl.getBoundingClientRect();
+    for (let i = 0; i < n; i++) {
+      const h = document.createElement('span');
+      h.className = 'heart';
+      h.textContent = '♥';
+      h.style.left = (r.left + r.width * (0.2 + Math.random() * 0.6)) + 'px';
+      h.style.top = (r.top + r.height * (0.2 + Math.random() * 0.5)) + 'px';
+      h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+      h.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      h.style.fontSize = (18 + Math.random() * 20) + 'px';
+      h.style.animationDelay = (i * 60) + 'ms';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1600 + i * 60);
+    }
+  }
+
+  const duduPic = document.querySelector('#dudu .pic');
+  const bubuPic = document.querySelector('#bubu .pic');
+  let lastLevel = -1;
+  function render() {
+    const s = stageOf(mood);
+    app.dataset.mood = s;
+    const lv = levelOf(mood);
+    if (lv !== lastLevel) {
+      duduPic.style.backgroundImage = `url("img/dudu-${levelName(lv)}.jpg")`;
+      bubuPic.style.backgroundImage = `url("img/bubu-${levelName(lv)}.jpg")`;
+      if (lastLevel !== -1) [duduPic, bubuPic].forEach(p => { p.classList.remove('swap'); void p.offsetWidth; p.classList.add('swap'); });
+      lastLevel = lv;
+    }
+    fill.style.width = mood + '%';
+    fill.dataset.zero = mood === 0 ? 'true' : 'false';
+    track.setAttribute('aria-valuenow', String(mood));
+    moodNum.textContent = mood + '%';
+    moodLabel.textContent = labelOf(mood);
+  }
+
+  function act(kind, btn) {
+    const i = counters[kind]++;
+    if (kind === 'note') {
+      const note = document.getElementById('note');
+      note.classList.remove('pop'); void note.offsetWidth; note.classList.add('pop');
+      say(duduSays, pick(duduNoteLine, i));
+    } else {
+      say(duduSays, pick(lines[kind], i));
+    }
+    if (kind === 'hug') {
+      stage.classList.add('hug');
+      setTimeout(() => stage.classList.remove('hug'), 1300);
+    } else {
+      stage.classList.remove('wiggle'); void stage.offsetWidth; stage.classList.add('wiggle');
+    }
+    mood = Math.min(100, mood + gains[kind]);
+    render();
+    const s = stageOf(mood);
+    setTimeout(() => say(bubuSays, pick(bubuReplies[s], counters[kind] + mood)), 450);
+    hearts(btn, kind === 'hug' ? 9 : 5);
+    hearts(document.querySelector('#bubu .pic'), 4);
+    if (mood >= 100 && !asked) { asked = true; setTimeout(ask, 700); }
+  }
+
+  document.getElementById('actions').addEventListener('click', e => {
+    const btn = e.target.closest('.act');
+    if (btn) act(btn.dataset.act, btn);
+  });
+
+  // Clicking a bear is fun too
+  document.querySelector('#dudu .pic').addEventListener('click', () => {
+    say(duduSays, mood >= 100 ? "I love you, Bubu Zaza!" : "Hehe, that tickles. Still sorry though!");
+    hearts(document.querySelector('#dudu .pic'), 3);
+  });
+  document.querySelector('#bubu .pic').addEventListener('click', () => {
+    say(bubuSays, pick(bubuReplies[stageOf(mood)], Math.floor(Math.random() * 4)));
+    hearts(document.querySelector('#bubu .pic'), 3);
+  });
+
+  const noTexts = ["No", "Are you sure?", "Really sure?", "Think again!", "Pleeease?", "Dudu will cry…", "You can't catch this one"];
+  let noCount = 0;
+
+  function ask() {
+    prompt.textContent = "Bubu Zaza's heart meter is full!";
+    say(duduSays, "Bubu… I have one question for you.");
+    slot.innerHTML = `
+      <div class="question" id="question">
+        <h2>Will you forgive Dudu Mingming?</h2>
+        <div class="btns" id="btns">
+          <button class="btn btn-yes" id="yes" type="button">Yes ♥</button>
+          <button class="btn btn-no" id="no" type="button">No</button>
+        </div>
+      </div>`;
+    const q = document.getElementById('question');
+    const yes = document.getElementById('yes');
+    const no = document.getElementById('no');
+    q.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    function dodge(e) {
+      if (e) e.preventDefault();
+      noCount++;
+      no.textContent = noTexts[Math.min(noCount, noTexts.length - 1)];
+      yes.style.transform = `scale(${Math.min(1 + noCount * 0.15, 1.9)})`;
+      no.classList.add('loose');
+      const qr = q.getBoundingClientRect();
+      const maxX = Math.max(0, qr.width - no.offsetWidth - 12);
+      const maxY = Math.max(0, qr.height - no.offsetHeight - 12);
+      no.style.left = (6 + Math.random() * maxX) + 'px';
+      no.style.top = (6 + Math.random() * maxY) + 'px';
+      say(duduSays, pick(["Wait, that button is broken!", "Hmm, try the pink one?", "Nope, not that one ♥", "I think you meant Yes."], noCount));
+    }
+    no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') dodge(); });
+    no.addEventListener('click', dodge);
+    yes.addEventListener('click', celebrate);
+  }
+
+  function celebrate() {
+    say(duduSays, "YAY! I love you, Bubu Zaza!");
+    say(bubuSays, "I love you too, Dudu Mingming ♥");
+    stage.classList.add('hug');
+    slot.innerHTML = `
+      <div class="question final">
+        <h2>Dudu Mingming ♥ Bubu Zaza</h2>
+        <img class="together" src="img/together.jpg" alt="Dudu Mingming and Bubu Zaza holding hands">
+        <p>Thank you for forgiving me. I'll keep trying to be the best bear for you. Next date night, you pick the place and I pay.</p>
+        <button class="small-link" id="again" type="button">Play again</button>
+      </div>`;
+    const hearts2 = () => hearts(stage, 14);
+    hearts2(); setTimeout(hearts2, 400); setTimeout(hearts2, 800);
+    document.getElementById('again').addEventListener('click', reset);
+  }
+
+  function reset() {
+    mood = 0; asked = false; noCount = 0;
+    Object.keys(counters).forEach(k => counters[k] = 0);
+    stage.classList.remove('hug');
+    slot.innerHTML = '';
+    prompt.textContent = "Bubu Zaza, tap anything below to fill your heart meter";
+    duduSays.textContent = "Bubu… can we talk? I made you this.";
+    bubuSays.textContent = "Hmph. I'm still upset.";
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  levels.forEach(l => ['dudu', 'bubu'].forEach(b => { const i = new Image(); i.src = `img/${b}-${levelName(l)}.jpg`; }));
+  new Image().src = 'img/together.jpg';
+  render();
+})();
+</script>
+
+</body>
+</html>

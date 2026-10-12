@@ -1,0 +1,6 @@
+# Only the website is tracked; original uploads stay local
+*
+!.gitignore
+!index.html
+!img/
+!img/*.jpg
